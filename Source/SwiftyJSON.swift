@@ -845,13 +845,21 @@ extension JSON {
         get {
             switch self.type {
             case .Number, .Bool:
-                return self.rawNumber
+                return self.object as? NSNumber
+            case .String:
+                let scanner = NSScanner(string: self.object as! String)
+                if scanner.scanDouble(nil){
+                    if (scanner.atEnd) {
+                        return NSNumber(double:(self.object as! NSString).doubleValue)
+                    }
+                }
+                return nil
             default:
                 return nil
             }
         }
         set {
-            self.object = newValue ?? NSNull()
+            self.object = newValue?.copy() ?? NSNull()
         }
     }
 
